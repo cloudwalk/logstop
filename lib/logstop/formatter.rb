@@ -2,14 +2,21 @@ require "logger"
 
 module Logstop
   class Formatter < ::Logger::Formatter
-    def initialize(formatter = nil, ip: false, scrubber: nil)
+    attr_reader :formatter, :email, :phone, :ip, :scrubber
+
+    def initialize(formatter = nil, email: true, phone: true, ip: false, scrubber: nil)
       @formatter = formatter || ::Logger::Formatter.new
+      @email = email
+      @phone = phone
       @ip = ip
       @scrubber = scrubber
     end
 
     def call(severity, timestamp, progname, msg)
-      Logstop.scrub(@formatter.call(severity, timestamp, progname, msg), ip: @ip, scrubber: @scrubber)
+      Logstop.scrub(
+        formatter.call(severity, timestamp, progname, msg),
+        email: email, phone: phone, ip: ip, scrubber: scrubber
+      )
     end
 
     # for tagged logging

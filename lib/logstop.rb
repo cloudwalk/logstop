@@ -14,15 +14,15 @@ module Logstop
   SSN_REGEX = /\b\d{3}[\s+-]\d{2}[\s+-]\d{4}\b/
   URL_PASSWORD_REGEX = /((?:\/\/|%2F%2F)\S+(?::|%3A))\S+(@|%40)/
 
-  def self.scrub(msg, ip: false, scrubber: nil)
+  def self.scrub(msg, email: true, phone: true, ip: false, scrubber: nil)
     msg = msg.to_s.dup
 
     # order filters are applied is important
     msg.gsub!(URL_PASSWORD_REGEX, FILTERED_URL_STR)
-    msg.gsub!(EMAIL_REGEX, FILTERED_STR)
+    msg.gsub!(EMAIL_REGEX, FILTERED_STR) if email
     msg.gsub!(CREDIT_CARD_REGEX, FILTERED_STR)
     msg.gsub!(CREDIT_CARD_REGEX_DELIMITERS, FILTERED_STR)
-    msg.gsub!(PHONE_REGEX, FILTERED_STR)
+    msg.gsub!(PHONE_REGEX, FILTERED_STR) if phone
     msg.gsub!(SSN_REGEX, FILTERED_STR)
 
     msg.gsub!(IP_REGEX, FILTERED_STR) if ip
